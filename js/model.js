@@ -13,7 +13,7 @@ class Request {
 }
 
 function addRequest (formData) {
-    let id = requests.length > 0 ? requests[requests.length - 1]['id'] + 1 : 0;
+    let id = requests.length > 0 ? requests[requests.length - 1]['id'] + 1 : 1;
     let request = new Request (id, formData.get('name'), formData.get('phone'), formData.get('email'), formData.get('product'));
     requests.push(request);
     
@@ -33,4 +33,33 @@ function loadRequests () {
     }
 }
 
-export {addRequest}
+function getRequests () {
+    return prepareRequests(requests);
+}
+
+const products = {
+    'course-html': 'Курс по верстке',
+    'course-js': 'Курс по JavaScript',
+    'course-vue': 'Курс по VUE JS',
+    'course-php': 'Курс по PHP',
+    'course-wordpress': 'Курс по WordPress'
+}
+
+const statuses = {
+    'new': 'Новая',
+    'inwork': 'В работе',
+    'complete': 'Завершена'
+}
+
+function prepareRequests (requests) {
+    return requests.map((item) => {
+        return {
+            ...item,
+            date: new Date(item.date).toLocaleDateString(),
+            productName: products[item.product],
+            statusName: statuses[item.status]
+        }
+    })
+}
+
+export {addRequest, getRequests};
