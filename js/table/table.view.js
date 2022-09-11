@@ -24,7 +24,7 @@ function renderRequests (requests) {
                                 <div class="badge badge-pill ${badges[request.status]}">${request.statusName}</div>
                             </td>
                             <td>
-                                <a href="edit.html">Редактировать</a>
+                                <a href="edit.html?id=${request.id}">Редактировать</a>
                             </td>
                         </tr>`;
 

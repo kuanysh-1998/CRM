@@ -62,4 +62,27 @@ function prepareRequests (requests) {
     })
 }
 
-export {addRequest, getRequests};
+function getRequestById (id) {
+    const request = requests.find((item) => item.id == id);
+
+    request.dateDate = new Date(request.date).toLocaleDateString();
+    request.dateTime = new Date(request.date).toLocaleTimeString();
+
+    return request;
+}
+
+function updateRequest (formData) {
+
+    const request = getRequestById(formData.get('id'));
+
+    request.name = formData.get('name'); 
+    request.email = formData.get('email'); 
+    request.phone = formData.get('phone'); 
+    request.product = formData.get('product'); 
+    request.status = formData.get('status'); 
+
+    saveRequests();
+
+}
+
+export {addRequest, getRequests, getRequestById, updateRequest}
