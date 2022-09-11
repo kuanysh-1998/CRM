@@ -1,6 +1,11 @@
 
 const elements = {
     table: document.querySelector('#tbody'),
+    select: document.querySelector('#productSelect'),
+    topStatusBar: document.querySelector('#topStatusBar'),
+    leftStatusLinks: document.querySelectorAll('[data-role="left-status"]'),
+    leftPanelNav: document.querySelector('.left-panel__navigation'),
+    badgeNew: document.querySelector('#badge-new'),
 }
 
 function renderRequests (requests) {
@@ -15,7 +20,7 @@ function renderRequests (requests) {
     for (let request of requests) {
         let template = `<tr>
                             <th scope="row">${request.id}</th>
-                            <td>${request.date}</td>
+                            <td>${request.dateToDisplay}</td>
                             <td>${request.productName}</td>
                             <td>${request.name}</td>
                             <td>${request.email}</td>
@@ -32,4 +37,44 @@ function renderRequests (requests) {
     }
 }
 
-export {elements, renderRequests};
+function updateStatusLinks (value) {
+    elements.topStatusBar.querySelectorAll('a').forEach((link) => {
+        link.classList.remove('active');
+    })
+
+    elements.topStatusBar.querySelector(`a[data-value='${value}']`).classList.add('active');
+
+    elements.leftStatusLinks.forEach((link) => {
+        link.classList.remove('active');
+    })
+
+    elements.leftPanelNav.querySelector(`a[data-value='${value}']`).classList.add('active');
+}
+
+function renderBadgeNew (number) {
+    elements.badgeNew.innerText = number; 
+
+    if (number == 0) {
+        elements.badgeNew.classList.add('none');
+    } else {
+        elements.badgeNew.classList.remove('none');
+    }
+}
+
+function updateFilter (filter) {
+    elements.select.value = filter.products;
+
+    elements.topStatusBar.querySelectorAll('a').forEach((link) => {
+        link.classList.remove('active');
+    })
+
+    elements.topStatusBar.querySelector(`a[data-value='${filter.status}']`).classList.add('active');
+
+    elements.leftStatusLinks.forEach((link) => {
+        link.classList.remove('active');
+    })
+
+    elements.leftPanelNav.querySelector(`a[data-value='${filter.status}']`).classList.add('active');
+}
+
+export {elements, renderRequests, updateStatusLinks, renderBadgeNew, updateFilter};

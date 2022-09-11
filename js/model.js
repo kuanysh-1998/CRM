@@ -12,13 +12,74 @@ class Request {
     }
 }
 
+const products = {
+    'course-html': 'Курс по верстке',
+    'course-js': 'Курс по JavaScript',
+    'course-vue': 'Курс по VUE JS',
+    'course-php': 'Курс по PHP',
+    'course-wordpress': 'Курс по WordPress'
+}
+
+const statuses = {
+    'new': 'Новая',
+    'inwork': 'В работе',
+    'complete': 'Завершена'
+}
+
+let filter =  loadFilter();
+
+function loadFilter () {
+    let filter = {
+        products: 'all',
+        status: 'all'
+    };
+
+    if (localStorage.getItem('filter')) {
+        filter = JSON.parse(localStorage.getItem('filter')); 
+    }
+
+    return filter; 
+}
+
+function changeFilter (prop, value) {
+    filter[prop] = value; 
+    localStorage.setItem('filter', JSON.stringify(filter));
+    return filter;
+}
+
+function filterRequests (filter) {
+    let filteredRequests;
+
+    if (filter.products !== 'all') {
+        filteredRequests = requests.filter((request) => {
+            return request.product === filter.products;
+        })
+    } else {
+        filteredRequests = [...requests];
+    }
+
+    if(filter.status !== 'all') {
+        filteredRequests = filteredRequests.filter((request) => {
+             return request.status === filter.status
+        })
+    }
+    return prepareRequests(filteredRequests);
+}
+
+function countNewRequests () {
+    let newRequests = requests.filter((el) => {
+        return el.status === 'new'; 
+    }) 
+
+    return newRequests.length; 
+}
+
 function addRequest (formData) {
     let id = requests.length > 0 ? requests[requests.length - 1]['id'] + 1 : 1;
     let request = new Request (id, formData.get('name'), formData.get('phone'), formData.get('email'), formData.get('product'));
     requests.push(request);
     
     saveRequests();
-    console.log(requests);
 }
 
 function saveRequests () {
@@ -34,28 +95,14 @@ function loadRequests () {
 }
 
 function getRequests () {
-    return prepareRequests(requests);
-}
-
-const products = {
-    'course-html': 'Курс по верстке',
-    'course-js': 'Курс по JavaScript',
-    'course-vue': 'Курс по VUE JS',
-    'course-php': 'Курс по PHP',
-    'course-wordpress': 'Курс по WordPress'
-}
-
-const statuses = {
-    'new': 'Новая',
-    'inwork': 'В работе',
-    'complete': 'Завершена'
+    return filterRequests (filter); 
 }
 
 function prepareRequests (requests) {
     return requests.map((item) => {
         return {
             ...item,
-            date: new Date(item.date).toLocaleDateString(),
+            dateToDisplay: new Date(item.date).toLocaleDateString(),
             productName: products[item.product],
             statusName: statuses[item.status]
         }
@@ -72,7 +119,6 @@ function getRequestById (id) {
 }
 
 function updateRequest (formData) {
-
     const request = getRequestById(formData.get('id'));
 
     request.name = formData.get('name'); 
@@ -82,7 +128,10 @@ function updateRequest (formData) {
     request.status = formData.get('status'); 
 
     saveRequests();
-
 }
 
-export {addRequest, getRequests, getRequestById, updateRequest}
+function getFilter () {
+    return {...filter};
+}
+
+export {addRequest, getRequests, getRequestById, updateRequest, changeFilter, filterRequests, countNewRequests, getFilter}

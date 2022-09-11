@@ -1,5 +1,4 @@
 
-
 class ExampleItem {
     constructor (name, phone, email, product) {
         this.name = name;
